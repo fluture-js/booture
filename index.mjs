@@ -130,7 +130,7 @@ const complete = (bootstrappers, hookResources) => (
 //. data Bootstrapper a b = Bootstrapper {
 //.   name :: Name,
 //.   needs :: Array Name,
-//.   bootstrap :: Hook (Future Error a) b
+//.   bootstrap :: StrMap b -> Hook (Future Error a) b
 //. }
 //. ```
 //.
