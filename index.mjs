@@ -127,16 +127,17 @@ const complete = (bootstrappers, hookResources) => (
 //.
 //. ```hs
 //. type Name = String
+//. type Services a = Dict Name a
 //. data Bootstrapper a b = Bootstrapper {
 //.   name :: Name,
 //.   needs :: Array Name,
-//.   bootstrap :: StrMap b -> Hook (Future Error a) b
+//.   bootstrap :: Services b -> Hook (Future Error a) b
 //. }
 //. ```
 //.
 //. ### Functions
 //.
-//# bootstrap :: Array (Bootstrapper a b) -> Hook (Future Error a) (StrMap b)
+//# bootstrap :: Array (Bootstrapper a b) -> Hook (Future Error a) (Services b)
 //.
 //. Given a list of service bootstrappers, returns a `Hook` that represents the
 //. acquisition and disposal of these services. Running the hook allows for
