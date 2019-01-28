@@ -75,10 +75,12 @@
 //.   bootstrap: ({redis, postgres}) => acquire (acquireApp (redis, postgres)),
 //. };
 //.
-//. const withServices = runHook (bootstrap ([ bootstrapConfig,
-//.                                            bootstrapPostgres,
-//.                                            bootstrapRedis,
-//.                                            bootstrapApp ]));
+//. const servicesHook = bootstrap ([ bootstrapConfig,
+//.                                   bootstrapPostgres,
+//.                                   bootstrapRedis,
+//.                                   bootstrapApp ]);
+//.
+//. const withServices = runHook (servicesHook);
 //.
 //. const program = withServices (({app}) => Future ((rej, res) => {
 //.   const conn = app.listen (3000);
@@ -88,6 +90,15 @@
 //.
 //. fork (console.error) (console.log) (program);
 //. ```
+//.
+//. Some things to note about the example above, and general usage of Booture:
+//.
+//. 1. `servicesHook` is a `Hook`, so before running it, it can be composed
+//.    with other hooks using `map`, `ap`, and `chain`, and even used in the
+//.    definition of other bootstrappers.
+//. 2. `program` is a `Future`, so nothing happens until it's forked. Before
+//.    forking it, it can be composed with other Futures using `map`, `ap`,
+//.    `bimap`, and `chain`, or any of the other functions provided by Fluture.
 
 import {reject, map, chain} from 'fluture';
 import {hookAll, acquire, Hook} from 'fluture-hooks';
@@ -127,16 +138,17 @@ const complete = (bootstrappers, hookResources) => (
 //.
 //. ```hs
 //. type Name = String
+//. type Services a = Dict Name a
 //. data Bootstrapper a b = Bootstrapper {
 //.   name :: Name,
 //.   needs :: Array Name,
-//.   bootstrap :: Hook (Future Error a) b
+//.   bootstrap :: Services b -> Hook (Future Error a) b
 //. }
 //. ```
 //.
 //. ### Functions
 //.
-//# bootstrap :: Array (Bootstrapper a b) -> Hook (Future Error a) (StrMap b)
+//# bootstrap :: Array (Bootstrapper a b) -> Hook (Future Error a) (Services b)
 //.
 //. Given a list of service bootstrappers, returns a `Hook` that represents the
 //. acquisition and disposal of these services. Running the hook allows for
