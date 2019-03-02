@@ -106,7 +106,6 @@ import {hookAll, acquire, Hook} from 'fluture-hooks';
 // hasProp :: Object ~> String -> Boolean
 const hasProp = Object.prototype.hasOwnProperty;
 
-// callBootstrappers :: (Array (Bootstrapper), StrMap Resource) -> Hook (StrMap Resource)
 const callBootstrappers = (bootstrappers, resources) => (
   map(
     xs => xs.reduce((acc, {resource, name}) => ({...acc, [name]: resource}), resources),
