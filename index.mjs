@@ -106,6 +106,53 @@ import {hookAll, acquire, Hook} from 'fluture-hooks';
 // hasProp :: Object ~> String -> Boolean
 const hasProp = Object.prototype.hasOwnProperty;
 
+const check = bootstrappers => {
+  const indexed = bootstrappers.reduce((acc, boot) => Object.assign({}, acc, {
+    [boot.name]: (acc[boot.name] || []).concat([boot])
+  }), {});
+
+  const doubles = Object.values(indexed).filter(({length}) => length > 1);
+
+  if (doubles.length > 0) {
+    throw new TypeError(`Flawed dependency graph:\n${
+      doubles.map(boots => `  - [${boots[0].name}] has ${boots.length} providers:\n${
+        boots.map(boot => `    - One depending on [${boot.needs.join('; ')}]`).join('; and\n')
+      }`).join('\n')
+    }`);
+  }
+
+  const validateTree = ({path, checked, flaws}, {name, needs}) => {
+    if (checked.includes(name)) {
+      return {path, flaws, checked};
+    }
+
+    if (path.includes(name)) {
+      return {path, checked: checked.concat([name]), flaws: flaws.concat([
+        `[${name}] circles around via [${path.slice(path.indexOf(name)).join(' -> ')} -> ${name}]`
+      ])};
+    }
+
+    const subs = needs.reduce((acc, need) => (
+      indexed[need] ?
+      validateTree(acc, indexed[need][0]) :
+      {path: acc.path, checked: acc.checked.concat([need]), flaws: acc.flaws.concat([
+        `[${name}] needs [${need}], which has no provider`
+      ])}
+    ), {path: path.concat([name]), checked, flaws});
+
+    return {path, checked: subs.checked.concat([name]), flaws: subs.flaws};
+
+  }
+
+  const {flaws} = bootstrappers.reduce(validateTree, {path: [], flaws: [], checked: []});
+
+  if (flaws.length > 0) {
+    throw new TypeError(`Flawed dependency graph:\n${
+      flaws.map(flaw => `  - ${flaw}`).join('\n')
+    }`);
+  }
+}
+
 const callBootstrappers = (bootstrappers, resources) => (
   map(
     xs => xs.reduce((acc, {resource, name}) => ({...acc, [name]: resource}), resources),
@@ -119,13 +166,6 @@ const complete = (bootstrappers, hookResources) => (
   bootstrappers.length === 0 ? hookResources : chain(resources => {
     const pred = ({needs}) => needs.every(need => hasProp.call(resources, need));
     const layer = bootstrappers.filter(pred);
-    if (layer.length === 0) {
-      return acquire(reject(new Error(
-        `Cannot bootstrap: unable to provide for: ${
-          bootstrappers.map(({name}) => name).join('; ')
-        }`
-      )));
-    }
     const remainder = bootstrappers.filter(x => !pred(x));
     return complete(remainder, callBootstrappers(layer, resources));
   }, hookResources)
@@ -141,18 +181,19 @@ const complete = (bootstrappers, hookResources) => (
 //. data Bootstrapper a b = Bootstrapper {
 //.   name :: Name,
 //.   needs :: Array Name,
-//.   bootstrap :: Services b -> Hook (Future Error a) b
+//.   bootstrap :: Services b -> Hook (Future c a) b
 //. }
 //. ```
 //.
 //. ### Functions
 //.
-//# bootstrap :: Array (Bootstrapper a b) -> Hook (Future Error a) (Services b)
+//# bootstrap :: Array (Bootstrapper a b) -> Hook (Future c a) (Services b)
 //.
 //. Given a list of service bootstrappers, returns a `Hook` that represents the
 //. acquisition and disposal of these services. Running the hook allows for
 //. consumption of the services.
 export const bootstrap = bootstrappers => {
+  check(bootstrappers);
   return complete(bootstrappers, Hook.of({}));
 };
 
