@@ -154,21 +154,19 @@ const check = bootstrappers => {
 }
 
 const callBootstrappers = (bootstrappers, resources) => (
-  map(
-    xs => xs.reduce((acc, {resource, name}) => ({...acc, [name]: resource}), resources),
-    hookAll(bootstrappers.map(
-      ({name, bootstrap}) => map(resource => ({resource, name}), bootstrap(resources))
-    ))
-  )
+  map (xs => xs.reduce ((acc, {resource, name}) => ({...acc, [name]: resource}), resources))
+      (hookAll (bootstrappers.map (
+        ({name, bootstrap}) => map (resource => ({resource, name})) (bootstrap (resources))
+      )))
 );
 
 const complete = (bootstrappers, hookResources) => (
-  bootstrappers.length === 0 ? hookResources : chain(resources => {
-    const pred = ({needs}) => needs.every(need => hasProp.call(resources, need));
-    const layer = bootstrappers.filter(pred);
-    const remainder = bootstrappers.filter(x => !pred(x));
-    return complete(remainder, callBootstrappers(layer, resources));
-  }, hookResources)
+  bootstrappers.length === 0 ? hookResources : chain (resources => {
+    const pred = ({needs}) => needs.every (need => hasProp.call (resources, need));
+    const layer = bootstrappers.filter (pred);
+    const remainder = bootstrappers.filter (x => ! pred (x));
+    return complete (remainder, callBootstrappers (layer, resources));
+  }) (hookResources)
 );
 
 //. ## API
