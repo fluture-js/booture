@@ -110,13 +110,13 @@ type Services a = Dict Name a
 data Bootstrapper a b = Bootstrapper {
   name :: Name,
   needs :: Array Name,
-  bootstrap :: Services b -> Hook (Future Error a) b
+  bootstrap :: Services b -> Hook (Future c a) b
 }
 ```
 
 ### Functions
 
-#### <a name="bootstrap" href="https://github.com/fluture-js/booture/blob/master/index.mjs#L151">`bootstrap :: Array (Bootstrapper a b) -⁠> Hook (Future Error a) (Services b)`</a>
+#### <a name="bootstrap" href="https://github.com/fluture-js/booture/blob/master/index.mjs#L190">`bootstrap :: Array (Bootstrapper a b) -⁠> Hook (Future c a) (Services b)`</a>
 
 Given a list of service bootstrappers, returns a `Hook` that represents the
 acquisition and disposal of these services. Running the hook allows for
