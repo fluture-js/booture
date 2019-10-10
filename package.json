@@ -1,6 +1,6 @@
 {
   "name": "booture",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Application bootstrapping on top of Fluture Hooks",
   "main": "index",
   "module": "index.mjs",
