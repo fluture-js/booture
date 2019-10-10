@@ -100,8 +100,8 @@
 //.    forking it, it can be composed with other Futures using `map`, `ap`,
 //.    `bimap`, and `chain`, or any of the other functions provided by Fluture.
 
-import {reject, map, chain} from 'fluture';
-import {hookAll, acquire, Hook} from 'fluture-hooks';
+import {map, chain} from 'fluture/index.js';
+import {hookAll, Hook} from 'fluture-hooks/index.js';
 
 // hasProp :: Object ~> String -> Boolean
 const hasProp = Object.prototype.hasOwnProperty;
@@ -141,7 +141,6 @@ const check = bootstrappers => {
     ), {path: path.concat([name]), checked, flaws});
 
     return {path, checked: subs.checked.concat([name]), flaws: subs.flaws};
-
   }
 
   const {flaws} = bootstrappers.reduce(validateTree, {path: [], flaws: [], checked: []});
@@ -154,21 +153,19 @@ const check = bootstrappers => {
 }
 
 const callBootstrappers = (bootstrappers, resources) => (
-  map(
-    xs => xs.reduce((acc, {resource, name}) => ({...acc, [name]: resource}), resources),
-    hookAll(bootstrappers.map(
-      ({name, bootstrap}) => map(resource => ({resource, name}), bootstrap(resources))
-    ))
-  )
+  map (xs => xs.reduce ((acc, {resource, name}) => ({...acc, [name]: resource}), resources))
+      (hookAll (bootstrappers.map (
+        ({name, bootstrap}) => map (resource => ({resource, name})) (bootstrap (resources))
+      )))
 );
 
 const complete = (bootstrappers, hookResources) => (
-  bootstrappers.length === 0 ? hookResources : chain(resources => {
-    const pred = ({needs}) => needs.every(need => hasProp.call(resources, need));
-    const layer = bootstrappers.filter(pred);
-    const remainder = bootstrappers.filter(x => !pred(x));
-    return complete(remainder, callBootstrappers(layer, resources));
-  }, hookResources)
+  bootstrappers.length === 0 ? hookResources : chain (resources => {
+    const pred = ({needs}) => needs.every (need => hasProp.call (resources, need));
+    const layer = bootstrappers.filter (pred);
+    const remainder = bootstrappers.filter (x => ! pred (x));
+    return complete (remainder, callBootstrappers (layer, resources));
+  }) (hookResources)
 );
 
 //. ## API
