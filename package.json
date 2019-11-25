@@ -2,20 +2,21 @@
   "name": "booture",
   "version": "1.0.1",
   "description": "Application bootstrapping on top of Fluture Hooks",
-  "main": "index",
-  "module": "index.mjs",
+  "type": "module",
+  "main": "index.cjs",
+  "module": "index.js",
   "scripts": {
-    "build": "rollup -c rollup.config.mjs",
+    "build": "rollup -c rollup.config.js",
     "release": "xyz --edit --script scripts/prerelease --increment",
-    "test": "node --experimental-modules --no-warnings --stack-trace-limit=100 ./test/index.mjs"
+    "test": "c8 --check-coverage --branches 96 --functions 100 --lines 100 --statements 100 node --experimental-modules --no-warnings ./node_modules/.bin/oletus"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/fluture-js/booture.git"
   },
   "files": [
+    "/index.cjs",
     "/index.js",
-    "/index.mjs",
     "/LICENSE",
     "/package.json",
     "/README.md"
@@ -24,12 +25,14 @@
   "license": "MIT",
   "dependencies": {},
   "peerDependencies": {
-    "fluture": ">=10.0.0 <12.0.0",
-    "fluture-hooks": ">=0.2.0 <2.0.0"
+    "fluture": ">=12.0.0-beta.4 <13.0.0",
+    "fluture-hooks": ">=2.0.0 <3.0.0"
   },
   "devDependencies": {
-    "fluture": "^11.0.0",
-    "fluture-hooks": "^1.0.0",
+    "c8": "^5.0.4",
+    "fluture": "^12.0.1",
+    "fluture-hooks": "^2.0.0",
+    "oletus": "^2.0.0",
     "rollup": "^1.1.0",
     "transcribe": "^1.1.1",
     "xyz": "^3.0.0"

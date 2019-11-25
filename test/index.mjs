@@ -1,8 +1,9 @@
-import {deepStrictEqual, throws} from 'assert';
+import {deepStrictEqual} from 'assert';
 import {inspect} from 'util';
-import {fork, resolve, debugMode} from 'fluture';
-import {acquire, runHook} from 'fluture-hooks';
-import {bootstrap} from '..';
+import {fork, resolve, debugMode} from 'fluture/index.js';
+import {acquire, runHook} from 'fluture-hooks/index.js';
+import {bootstrap} from '../index.js';
+import test from 'oletus';
 
 debugMode (true);
 
@@ -33,19 +34,23 @@ const flawed = {
   ]
 };
 
-Object.entries(flawed).forEach(([message, bootstrappers]) => {
-  throws (() => bootstrap (bootstrappers)
-         , new TypeError(`Flawed dependency graph:\n${message}`));
+test ('flawed graph', ({throws}) => {
+  Object.entries(flawed).forEach(([message, bootstrappers]) => {
+    throws (() => bootstrap (bootstrappers)
+           , new TypeError(`Flawed dependency graph:\n${message}`));
+  });
 });
 
-fork (fail)
-     (eq ({}))
-     (runHook (bootstrap ([])) (resolve));
+test ('valid graph', () => {
+  fork (fail)
+       (eq ({}))
+       (runHook (bootstrap ([])) (resolve));
 
-fork (fail)
-     (eq ({x: 42}))
-     (runHook (bootstrap ([make('x', [])])) (resolve));
+  fork (fail)
+       (eq ({x: 42}))
+       (runHook (bootstrap ([make('x', [])])) (resolve));
 
-fork (fail)
-     (eq ({x: 42, y: 42}))
-     (runHook (bootstrap ([make('x', ['y']), make('y', [])])) (resolve));
+  fork (fail)
+       (eq ({x: 42, y: 42}))
+       (runHook (bootstrap ([make('x', ['y']), make('y', [])])) (resolve));
+});
