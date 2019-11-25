@@ -116,7 +116,7 @@ data Bootstrapper a b = Bootstrapper {
 
 ### Functions
 
-#### <a name="bootstrap" href="https://github.com/fluture-js/booture/blob/master/index.mjs#L190">`bootstrap :: Array (Bootstrapper a b) -⁠> Hook (Future c a) (Services b)`</a>
+#### <a name="bootstrap" href="https://github.com/fluture-js/booture/blob/master/index.js#L187">`bootstrap :: Array (Bootstrapper a b) -⁠> Hook (Future c a) (Services b)`</a>
 
 Given a list of service bootstrappers, returns a `Hook` that represents the
 acquisition and disposal of these services. Running the hook allows for
