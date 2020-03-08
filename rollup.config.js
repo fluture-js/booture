@@ -12,7 +12,7 @@ export default {
     },
     globals: {
       'fluture/index.js': 'Fluture',
-      'fluture-hooks/index.js': 'flutureHooks'
-    }
-  }
+      'fluture-hooks/index.js': 'flutureHooks',
+    },
+  },
 };
