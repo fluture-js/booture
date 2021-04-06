@@ -26,14 +26,14 @@
 //.
 //. You can load the EcmaScript module from various content delivery networks:
 //.
-//. - [Skypack](https://cdn.skypack.dev/booture@2.0.0)
-//. - [JSPM](https://jspm.dev/booture@2.0.0)
-//. - [jsDelivr](https://cdn.jsdelivr.net/npm/booture@2.0.0/+esm)
+//. - [Skypack](https://cdn.skypack.dev/booture@2.1.0)
+//. - [JSPM](https://jspm.dev/booture@2.1.0)
+//. - [jsDelivr](https://cdn.jsdelivr.net/npm/booture@2.1.0/+esm)
 //.
 //. ### Old Browsers and Code Pens
 //.
 //. There's a [UMD][] file included in the NPM package, also available via
-//. jsDelivr: https://cdn.jsdelivr.net/npm/booture@2.0.0/dist/umd.js
+//. jsDelivr: https://cdn.jsdelivr.net/npm/booture@2.1.0/dist/umd.js
 //.
 //. This file adds `booture` to the global scope, or use CommonJS/AMD
 //. when available.

@@ -10,11 +10,35 @@ Booture exposes a single function: [`bootstrap`](#bootstrap), which in
 combination with [Fluture][] and [Fluture Hooks][], provides an ideal
 platform for control over your application lifecycle.
 
-## Usage Example
+## Usage
+
+### Node
 
 ```console
-npm install fluture booture fluture-hooks
+$ npm install --save fluture booture fluture-hooks
 ```
+
+On Node 12 and up, this module can be loaded directly with `import` or
+`require`. On Node versions below 12, `require` or the [esm][]-loader can
+be used.
+
+### Deno and Modern Browsers
+
+You can load the EcmaScript module from various content delivery networks:
+
+- [Skypack](https://cdn.skypack.dev/booture@2.1.0)
+- [JSPM](https://jspm.dev/booture@2.1.0)
+- [jsDelivr](https://cdn.jsdelivr.net/npm/booture@2.1.0/+esm)
+
+### Old Browsers and Code Pens
+
+There's a [UMD][] file included in the NPM package, also available via
+jsDelivr: https://cdn.jsdelivr.net/npm/booture@2.1.0/dist/umd.js
+
+This file adds `booture` to the global scope, or use CommonJS/AMD
+when available.
+
+### Usage Example
 
 The example below defines four "services": `config`, `postgres`, `redis`,
 and `app`. The App depends on Redis and Postgres having been initialized,
@@ -36,11 +60,11 @@ const acquireConfig = (
 );
 
 const acquirePostgres = config => (
-  node (done => require ('imaginary-postgres') .connect (config, done))
+  node (done => require ('imaginary-postgres').connect (config, done))
 );
 
 const acquireRedis = config => (
-  node (done => require ('imaginary-redis') .connect (config, done))
+  node (done => require ('imaginary-redis').connect (config, done))
 );
 
 const closeConnection = connection => (
@@ -60,13 +84,15 @@ const bootstrapConfig = {
 const bootstrapPostgres = {
   name: 'postgres',
   needs: ['config'],
-  bootstrap: ({config}) => hook (acquirePostgres (config.postgres)) (closeConnection),
+  bootstrap: ({config}) => hook (acquirePostgres (config.postgres))
+                                (closeConnection),
 };
 
 const bootstrapRedis = {
   name: 'redis',
   needs: ['config'],
-  bootstrap: ({config}) => hook (acquireRedis (config.redis)) (closeConnection),
+  bootstrap: ({config}) => hook (acquireRedis (config.redis))
+                                (closeConnection),
 };
 
 const bootstrapApp = {
@@ -116,7 +142,7 @@ data Bootstrapper a b = Bootstrapper {
 
 ### Functions
 
-#### <a name="bootstrap" href="https://github.com/fluture-js/booture/blob/master/index.js#L187">`bootstrap :: Array (Bootstrapper a b) -⁠> Hook (Future c a) (Services b)`</a>
+#### <a name="bootstrap" href="https://github.com/fluture-js/booture/blob/v2.1.0/index.js#L235">`bootstrap :: Array (Bootstrapper a b) -⁠> Hook (Future c a) (Services b)`</a>
 
 Given a list of service bootstrappers, returns a `Hook` that represents the
 acquisition and disposal of these services. Running the hook allows for
@@ -124,3 +150,5 @@ consumption of the services.
 
 [Fluture]: https://github.com/fluture-js/fluture
 [Fluture Hooks]: https://github.com/fluture-js/fluture-hooks
+[esm]: https://github.com/standard-things/esm
+[UMD]: https://github.com/umdjs/umd
