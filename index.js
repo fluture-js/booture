@@ -10,11 +10,35 @@
 //. combination with [Fluture][] and [Fluture Hooks][], provides an ideal
 //. platform for control over your application lifecycle.
 //.
-//. ## Usage Example
+//. ## Usage
+//.
+//. ### Node
 //.
 //. ```console
-//. npm install fluture booture fluture-hooks
+//. $ npm install --save fluture booture fluture-hooks
 //. ```
+//.
+//. On Node 12 and up, this module can be loaded directly with `import` or
+//. `require`. On Node versions below 12, `require` or the [esm][]-loader can
+//. be used.
+//.
+//. ### Deno and Modern Browsers
+//.
+//. You can load the EcmaScript module from various content delivery networks:
+//.
+//. - [Skypack](https://cdn.skypack.dev/booture@2.0.0)
+//. - [JSPM](https://jspm.dev/booture@2.0.0)
+//. - [jsDelivr](https://cdn.jsdelivr.net/npm/booture@2.0.0/+esm)
+//.
+//. ### Old Browsers and Code Pens
+//.
+//. There's a [UMD][] file included in the NPM package, also available via
+//. jsDelivr: https://cdn.jsdelivr.net/npm/booture@2.0.0/dist/umd.js
+//.
+//. This file adds `booture` to the global scope, or use CommonJS/AMD
+//. when available.
+//.
+//. ### Usage Example
 //.
 //. The example below defines four "services": `config`, `postgres`, `redis`,
 //. and `app`. The App depends on Redis and Postgres having been initialized,
@@ -220,3 +244,5 @@ export const bootstrap = bootstrappers => {
 
 //. [Fluture]: https://github.com/fluture-js/fluture
 //. [Fluture Hooks]: https://github.com/fluture-js/fluture-hooks
+//. [esm]: https://github.com/standard-things/esm
+//. [UMD]: https://github.com/umdjs/umd

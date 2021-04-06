@@ -2,15 +2,22 @@
   "name": "booture",
   "version": "2.0.0",
   "description": "Application bootstrapping on top of Fluture Hooks",
-  "tags": [
+  "keywords": [
     "fluture",
     "resource-management",
     "application-bootstrapping",
     "dependency-injection"
   ],
   "type": "module",
-  "main": "index.cjs",
+  "main": "./dist/umd.js",
   "module": "index.js",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./dist/umd.js"
+    },
+    "./index.js": "./index.js"
+  },
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "codecov": "codecov",
@@ -24,7 +31,7 @@
     "url": "git://github.com/fluture-js/booture.git"
   },
   "files": [
-    "/index.cjs",
+    "/dist",
     "/index.js",
     "/LICENSE",
     "/package.json",
